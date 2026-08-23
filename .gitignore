@@ -1,0 +1,5 @@
+/target/
+/adapter/target/
+*.wasm
+!/extension.wasm
+.DS_Store

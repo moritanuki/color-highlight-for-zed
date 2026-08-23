@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: dtolnay/rust-toolchain@1.98.0
+        with:
+          targets: wasm32-wasip2
+      - name: Test language server
+        run: npm test
+      - name: Check extension formatting
+        run: cargo fmt --manifest-path adapter/Cargo.toml --check
+      - name: Check extension WebAssembly build
+        run: cargo check --manifest-path adapter/Cargo.toml --target wasm32-wasip2
+      - name: Verify prebuilt extension
+        run: |
+          npm run build:extension
+          npm run check
